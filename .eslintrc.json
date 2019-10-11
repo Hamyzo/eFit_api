@@ -1,0 +1,25 @@
+{
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": ["airbnb", "prettier"],
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "globals": {
+  },
+  "plugins": [
+    "react",
+    "prettier"
+  ],
+  "rules": {
+    "prettier/prettier": ["error"],
+    "linebreak-style": ["error", "windows"],
+    "quotes": "off",
+    "comma-dangle": "off",
+    "arrow-parens": "off",
+    "react/jsx-wrap-multilines": "off"
+  }
+}

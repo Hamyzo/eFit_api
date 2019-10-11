@@ -1,0 +1,15 @@
+{
+  "port_http": 3015,
+  "database_url": "mongodb://:@localhost:27017/eFit_test",
+  "dev_api_url": "localhost",
+  "request_body_max_size": "<1000ko>",
+  "magic_token": "api_magic_token",
+  "salt_rounds": 12,
+  "sha256": "606A5AD9B1D3FE8FB6F18F5EF678CACA91968A51AE904166584DE2D91031CF83",
+  "token_expires_in": "3h",
+  "token_activate_expires_in": "24h",
+  "routes_without_token": [
+    {"path":  "*"}
+  ],
+  "status_needed_for_login" : "ACTIVE"
+}
