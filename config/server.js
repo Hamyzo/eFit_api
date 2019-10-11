@@ -11,6 +11,7 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 const logger = require('../src/utils/logger');
 const config = require('./config');
+const personal = require('./personal');
 const routes = require('../src/routes/index');
 const middleware = require('../src/utils/request-middleware');
 const configSwagger = require('./swagger');
@@ -18,11 +19,11 @@ const handleErrorType = require('../src/utils/handle-errors-type');
 const { NotFound } = require('../src/utils/Errors');
 
 if (process.env.NODE_ENV === 'prod') {
-  global.api_url = `${config.prod_api_url}:${config.port_https}`;
+  global.api_url = `${config.prod_api_url}:${personal.port_https}`;
 } else if (process.env.NODE_ENV === 'dev') {
-  global.api_url = `${config.dev_api_url}:${config.port_http}`;
+  global.api_url = `${config.dev_api_url}:${personal.port_http}`;
 } else {
-  global.api_url = `http://localhost:${config.port_http}`;
+  global.api_url = `http://localhost:${personal.port_http}`;
 }
 
 /**
