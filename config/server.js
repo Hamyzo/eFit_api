@@ -84,7 +84,7 @@ module.exports = callback => {
     next();
   });
 
-  http.createServer(app).listen(config.port_http);
+  http.createServer(app).listen(personal.port_http);
   logger.info(`[SERVER]: Listening on ${global.api_url}.`);
 
   if (callback) {
