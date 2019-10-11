@@ -1,5 +1,4 @@
 {
-  "port_http": 3015,
   "database_url": "mongodb://:@localhost:27017/eFit_test",
   "dev_api_url": "localhost",
   "request_body_max_size": "<1000ko>",
