@@ -1,7 +1,7 @@
 /**
  * PACKAGES
  */
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const { Schema } = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -121,6 +121,10 @@ const UserSchema = new Schema({
     required: true,
     unique: true,
     trim: true
+  },
+  age: {
+    type: Number,
+    required: true
   },
   password: {
     type: String,
