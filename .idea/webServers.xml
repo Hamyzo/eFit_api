@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="cfa58a6a-1ae1-4bf4-a5d3-e79d7e64298a" name="etu2-test" url="http://etu-web2.ut-capitole.fr">
+        <fileTransfer host="etu-web2.ut-capitole.fr" port="22" rootFolder="/espace/21808408" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

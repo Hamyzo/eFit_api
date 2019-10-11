@@ -3,7 +3,6 @@
  */
 const { Schema } = require('mongoose');
 
-
 /**
  * @swagger
  *

@@ -16,8 +16,14 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *     Program:
  *       type: object
  *       required:
- *         -
+ *         - name
  *       properties:
+ *        name:
+ *           type: string
+ *           example: Dump bell program
+ *        description:
+ *           type: text
+ *           example: The program is about well being and fit
  *
  */
 
