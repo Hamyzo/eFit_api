@@ -1,9 +1,8 @@
 /**
  * PACKAGES
  */
-const { sendPayload } = require('../utils/Responses');
-const Users = require('../models/users');
-
+const { sendPayload } = require("../utils/Responses");
+const Users = require("../models/customers");
 
 /**
  * @swagger
@@ -34,9 +33,11 @@ const Users = require('../models/users');
  */
 const getLogin = (req, res, next) => {
   // console.log(req.data);
-  const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
+  const b64auth = (req.headers.authorization || "").split(" ")[1] || "";
   // eslint-disable-next-line new-cap
-  const [login, password] = new Buffer.from(b64auth, 'base64').toString().split(':');
+  const [login, password] = new Buffer.from(b64auth, "base64")
+    .toString()
+    .split(":");
   Users.login(login, password, (err, user, token) => {
     if (err) {
       return next(err);
@@ -54,5 +55,5 @@ const getLogin = (req, res, next) => {
 };
 
 module.exports = router => {
-  router.route('/').get(getLogin);
+  router.route("/").get(getLogin);
 };

@@ -8,7 +8,7 @@ const { Schema } = require('mongoose');
  *
  * components:
  *   schemas:
- *     address:
+ *     Address:
  *       type: object
  *       required:
  *         - number

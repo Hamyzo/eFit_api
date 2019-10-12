@@ -15,7 +15,7 @@
     "prettier"
   ],
   "rules": {
-    "prettier/prettier": ["off"],
+    "prettier/prettier": ["error"],
     "quotes": "off",
     "comma-dangle": "off",
     "arrow-parens": "off",

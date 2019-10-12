@@ -4,7 +4,7 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const aqp = require("api-query-params");
-const Programs = require("../models/programs");
+const Exercises = require("../models/exercises");
 const { NotFound, BadRequest } = require("../utils/Errors");
 const { sendCreated, sendOk, sendPayload } = require("../utils/Responses");
 
@@ -18,13 +18,13 @@ const endpointName = __filename.slice(__dirname.length + 1, -3);
 /**
  * @swagger
  * paths:
- *   /programs:
+ *   /exercises:
  *     get:
- *       description: Get all programs.
- *       operationId: getPrograms
- *       summary: Get all programs.
+ *       description: Get all exercises.
+ *       operationId: getExercises
+ *       summary: Get all exercises.
  *       tags:
- *         - programs
+ *         - exercises
  *       responses:
  *         '200':
  *            description:
@@ -33,21 +33,21 @@ const endpointName = __filename.slice(__dirname.length + 1, -3);
  *                schema:
  *                  type: array
  *                  items:
- *                    $ref: '#/components/schemas/Program'
+ *                    $ref: '#/components/schemas/Exercise'
  */
 router.get("/", async (req, res, next) => {
   try {
     const { filter, skip, limit, sort, projection, population } = aqp(
       req.query
     );
-    const programs = await Programs.find(filter)
+    const exercises = await Exercises.find(filter)
       .skip(skip)
       .limit(limit)
       .sort(sort)
       .select(projection)
       .populate(population);
 
-    return sendPayload(res, programs);
+    return sendPayload(res, exercises);
   } catch (error) {
     return next(error);
   }
@@ -56,18 +56,18 @@ router.get("/", async (req, res, next) => {
 /**
  * @swagger
  * paths:
- *   /programs/{id}:
+ *   /exercises/{id}:
  *     get:
- *       description: Get a program information corresponding to a specific ID.
- *       operationId: getProgram
- *       summary: Get a specific program information.
+ *       description: Get a exercise information corresponding to a specific ID.
+ *       operationId: getExercise
+ *       summary: Get a specific exercise information.
  *       tags:
- *         - programs
+ *         - exercises
  *       parameters:
  *         - in: path
  *           name: id
  *           required: true
- *           description: The MongoDB ID of the program.
+ *           description: The MongoDB ID of the exercise.
  *           schema:
  *             type: string
  *
@@ -77,7 +77,7 @@ router.get("/", async (req, res, next) => {
  *           content:
  *             application/json:
  *               schema:
- *                 $ref: '#/components/schemas/Program'
+ *                 $ref: '#/components/schemas/Exercise'
  *         '404':
  *           $ref: '#/components/responses/NotFound'
  */
@@ -85,12 +85,12 @@ router.get("/:id", async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const program = await Programs.findOne({ _id: id }, "-password");
+    const exercise = await Exercises.findOne({ _id: id }, "-password");
 
-    if (!program) {
-      return next(new NotFound(`Program #${id} could not be found.`));
+    if (!exercise) {
+      return next(new NotFound(`Exercise #${id} could not be found.`));
     }
-    return sendPayload(res, program, 200);
+    return sendPayload(res, exercise, 200);
   } catch (error) {
     return next(error);
   }
@@ -99,20 +99,20 @@ router.get("/:id", async (req, res, next) => {
 /**
  * @swagger
  * paths:
- *   /programs:
+ *   /exercises:
  *     post:
- *       description: Register a new program to the database.
- *       operationId: createProgram
- *       summary: Create a new program.
+ *       description: Register a new exercise to the database.
+ *       operationId: createExercise
+ *       summary: Create a new exercise.
  *       tags:
- *         - programs
+ *         - exercises
  *       requestBody:
- *         description: Program information needed in order to create an program.
+ *         description: Exercise information needed in order to create an exercise.
  *         required: true
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#components/schemas/Program'
+ *               $ref: '#components/schemas/Exercise'
  *       responses:
  *         '201':
  *           $ref: '#/components/responses/Created'
@@ -122,21 +122,21 @@ router.get("/:id", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   // eslint-disable-next-line no-underscore-dangle
   req.body._id = mongoose.Types.ObjectId(req.body._id);
-  const newProgram = new Programs(req.body);
-  const err = newProgram.validateSync();
+  const newExercise = new Exercises(req.body);
+  const err = newExercise.validateSync();
 
   if (err !== undefined) {
     return next(new BadRequest(err.errors));
   }
 
   try {
-    const program = await newProgram.save();
+    const exercise = await newExercise.save();
 
     res.set({
-      Location: `${global.api_url}/${endpointName}/${program.id}`
+      Location: `${global.api_url}/${endpointName}/${exercise.id}`
     });
 
-    return sendCreated(res, "Program successfully created.");
+    return sendCreated(res, "Exercise successfully created.");
   } catch (error) {
     return next(error);
   }
@@ -145,26 +145,26 @@ router.post("/", async (req, res, next) => {
 /**
  * @swagger
  * paths:
- *   /programs/{id}:
+ *   /exercises/{id}:
  *     patch:
- *       description: Update an program to the database.
- *       operationId: patchProgram
- *       summary: Update an program.
+ *       description: Update an exercise to the database.
+ *       operationId: patchExercise
+ *       summary: Update an exercise.
  *       tags:
- *         - programs
+ *         - exercises
  *       parameters:
  *         - in: path
  *           name: id
  *           required: true
- *           description: The MongoDB ID of the program.
+ *           description: The MongoDB ID of the exercise.
  *           schema:
  *             type: string
  *       requestBody:
- *         description: Program information needed in order to update a program. Just fields witch need to be updated are required.
+ *         description: Exercise information needed in order to update a exercise. Just fields witch need to be updated are required.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#components/schemas/Program'
+ *               $ref: '#components/schemas/Exercise'
  *       responses:
  *         '200':
  *           $ref: '#/components/responses/OK'
@@ -175,7 +175,7 @@ router.post("/", async (req, res, next) => {
  */
 router.patch("/:id", (req, res, next) => {
   const { id } = req.params;
-  Programs.updateOne(
+  Exercises.updateOne(
     { _id: id },
     req.body,
     { runValidators: true },
@@ -184,7 +184,7 @@ router.patch("/:id", (req, res, next) => {
         return next(err);
       }
       if (result.nModified === 0) {
-        return next(new NotFound(`Program #${id} could not be found.`));
+        return next(new NotFound(`Exercise #${id} could not be found.`));
       }
       return sendOk(res);
     }
@@ -194,18 +194,18 @@ router.patch("/:id", (req, res, next) => {
 /**
  * @swagger
  * paths:
- *   /programs/{id}:
+ *   /exercises/{id}:
  *     delete:
- *       description: Delete an program thanks to a specific ID.
- *       operationId: deleteProgram
- *       summary: Delete a specific program.
+ *       description: Delete an exercise thanks to a specific ID.
+ *       operationId: deleteExercise
+ *       summary: Delete a specific exercise.
  *       tags:
- *         - programs
+ *         - exercises
  *       parameters:
  *         - in: path
  *           name: id
  *           required: true
- *           description: The MongoDB ID of the program.
+ *           description: The MongoDB ID of the exercise.
  *           schema:
  *             type: string
  *
@@ -218,12 +218,12 @@ router.patch("/:id", (req, res, next) => {
 router.delete("/:id", (req, res, next) => {
   const { id } = req.params;
 
-  Programs.deleteOne({ _id: id }, (err, result) => {
+  Exercises.deleteOne({ _id: id }, (err, result) => {
     if (err) {
       return next(err);
     }
     if (result.n === 0) {
-      return next(new NotFound(`Program #${id} could not be found.`));
+      return next(new NotFound(`Exercise #${id} could not be found.`));
     }
     return sendOk(res);
   });

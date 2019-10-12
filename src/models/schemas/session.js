@@ -4,36 +4,7 @@
 const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 
-const uniqueValidator = require("mongoose-unique-validator");
-
-const Session = require("./schemas/session");
-
-const filename = __filename.slice(__dirname.length + 1, -3);
-
-/**
- * @swagger
- *
- * components:
- *   schemas:
- *     Program:
- *       type: object
- *       required:
- *         - name
- *       properties:
- *         name:
- *           type: string
- *           example: Dump bell program
- *         description:
- *           type: text
- *           example: The program is about well being and fit
- *         sessions:
- *           $ref: '#/components/schemas/Session'
- *         creation_date:
- *           type: string
- *           format: date-time
- *           example: 2019-10-15T20:20:20Z
- *
- */
+const Period = require("./period");
 
 /**
  * @swagger
@@ -94,31 +65,32 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *           example: 14
  */
 
-const ProgramSchema = new Schema({
+module.exports = new Schema({
+  _id: false,
   name: {
     type: String,
     required: true
   },
-  coach: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "coaches"
-  },
   description: {
     type: String
   },
-  sessions: [
+  periods: [
     {
-      type: Session
+      type: Period
     }
   ],
-  creation_date: {
-    type: Date,
-    default: Date.now()
-  }
+  exercises: [
+    {
+      exercise: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "exercises"
+      },
+      reps: {
+        type: Number
+      },
+      sets: {
+        type: Number
+      }
+    }
+  ]
 });
-
-ProgramSchema.plugin(uniqueValidator);
-
-const Programs = mongoose.model(filename, ProgramSchema);
-
-module.exports = Programs;

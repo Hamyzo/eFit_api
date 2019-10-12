@@ -4,7 +4,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const express = require("express");
-const Users = require("../models/users");
+const aqp = require("api-query-params");
+const Customers = require("../models/customers");
 const { NotFound, BadRequest } = require("../utils/Errors");
 const { sendCreated, sendOk, sendPayload } = require("../utils/Responses");
 const config = require("../../config/config");
@@ -19,13 +20,13 @@ const endpointName = __filename.slice(__dirname.length + 1, -3);
 /**
  * @swagger
  * paths:
- *   /users:
+ *   /customers:
  *     get:
- *       description: Get all users.
- *       operationId: getUsers
- *       summary: Get all users.
+ *       description: Get all customers.
+ *       operationId: getCustomers
+ *       summary: Get all customers.
  *       tags:
- *         - users
+ *         - customers
  *       responses:
  *         '200':
  *            description:
@@ -34,13 +35,21 @@ const endpointName = __filename.slice(__dirname.length + 1, -3);
  *                schema:
  *                  type: array
  *                  items:
- *                    $ref: '#/components/schemas/User'
+ *                    $ref: '#/components/schemas/Customer'
  */
 router.get("/", async (req, res, next) => {
   try {
-    const users = await Users.find({}, "-password");
+    const { filter, skip, limit, sort, projection, population } = aqp(
+      req.query
+    );
+    const customers = await Customers.find(filter, "-password")
+      .skip(skip)
+      .limit(limit)
+      .sort(sort)
+      .select(projection)
+      .populate(population);
 
-    return sendPayload(res, users);
+    return sendPayload(res, customers);
   } catch (error) {
     return next(error);
   }
@@ -49,18 +58,18 @@ router.get("/", async (req, res, next) => {
 /**
  * @swagger
  * paths:
- *   /users/{id}:
+ *   /customers/{id}:
  *     get:
- *       description: Get a user information corresponding to a specific ID.
- *       operationId: getUser
- *       summary: Get a specific user information.
+ *       description: Get a customer information corresponding to a specific ID.
+ *       operationId: getCustomer
+ *       summary: Get a specific customer information.
  *       tags:
- *         - users
+ *         - customers
  *       parameters:
  *         - in: path
  *           name: id
  *           required: true
- *           description: The MongoDB ID of the user.
+ *           description: The MongoDB ID of the customer.
  *           schema:
  *             type: string
  *
@@ -70,7 +79,7 @@ router.get("/", async (req, res, next) => {
  *           content:
  *             application/json:
  *               schema:
- *                 $ref: '#/components/schemas/User'
+ *                 $ref: '#/components/schemas/Customer'
  *         '404':
  *           $ref: '#/components/responses/NotFound'
  */
@@ -78,35 +87,34 @@ router.get("/:id", async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const user = await Users.findOne({ _id: id }, "-password");
+    const customer = await Customers.findOne({ _id: id }, "-password");
 
-    if (!user) {
-      return next(new NotFound(`User #${id} could not be found.`));
+    if (!customer) {
+      return next(new NotFound(`Customer #${id} could not be found.`));
     }
-    return sendPayload(res, user, 200);
+    return sendPayload(res, customer, 200);
   } catch (error) {
     return next(error);
   }
 });
 
-
 /**
  * @swagger
  * paths:
- *   /users:
+ *   /customers:
  *     post:
- *       description: Register a new user to the database.
- *       operationId: createUser
- *       summary: Create a new user.
+ *       description: Register a new customer to the database.
+ *       operationId: createCustomer
+ *       summary: Create a new customer.
  *       tags:
- *         - users
+ *         - customers
  *       requestBody:
- *         description: User information needed in order to create an user.
+ *         description: Customer information needed in order to create an customer.
  *         required: true
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#components/schemas/User'
+ *               $ref: '#components/schemas/Customer'
  *       responses:
  *         '201':
  *           $ref: '#/components/responses/Created'
@@ -116,8 +124,8 @@ router.get("/:id", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   // eslint-disable-next-line no-underscore-dangle
   req.body._id = mongoose.Types.ObjectId(req.body._id);
-  const newUser = new Users(req.body);
-  const err = newUser.validateSync();
+  const newCustomer = new Customers(req.body);
+  const err = newCustomer.validateSync();
 
   console.log("in post with:", req.body);
   if (err !== undefined) {
@@ -125,13 +133,13 @@ router.post("/", async (req, res, next) => {
   }
 
   try {
-    const user = await newUser.save();
+    const customer = await newCustomer.save();
 
     res.set({
-      Location: `${global.api_url}/${endpointName}/${user.id}`
+      Location: `${global.api_url}/${endpointName}/${customer.id}`
     });
 
-    return sendCreated(res, "User successfully created.");
+    return sendCreated(res, "Customer successfully created.");
   } catch (error) {
     return next(error);
   }
@@ -140,26 +148,26 @@ router.post("/", async (req, res, next) => {
 /**
  * @swagger
  * paths:
- *   /users/{id}:
+ *   /customers/{id}:
  *     patch:
- *       description: Update an user to the database.
- *       operationId: patchUser
- *       summary: Update an user.
+ *       description: Update an customer to the database.
+ *       operationId: patchCustomer
+ *       summary: Update an customer.
  *       tags:
- *         - users
+ *         - customers
  *       parameters:
  *         - in: path
  *           name: id
  *           required: true
- *           description: The MongoDB ID of the user.
+ *           description: The MongoDB ID of the customer.
  *           schema:
  *             type: string
  *       requestBody:
- *         description: User information needed in order to update a user. Just fields witch need to be updated are required.
+ *         description: Customer information needed in order to update a customer. Just fields witch need to be updated are required.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#components/schemas/User'
+ *               $ref: '#components/schemas/Customer'
  *       responses:
  *         '200':
  *           $ref: '#/components/responses/OK'
@@ -170,7 +178,7 @@ router.post("/", async (req, res, next) => {
  */
 router.patch("/:id", (req, res, next) => {
   const { id } = req.params;
-  Users.updateOne(
+  Customers.updateOne(
     { _id: id },
     req.body,
     { runValidators: true },
@@ -179,7 +187,7 @@ router.patch("/:id", (req, res, next) => {
         return next(err);
       }
       if (result.nModified === 0) {
-        return next(new NotFound(`User #${id} could not be found.`));
+        return next(new NotFound(`Customer #${id} could not be found.`));
       }
       return sendOk(res);
     }
@@ -189,18 +197,18 @@ router.patch("/:id", (req, res, next) => {
 /**
  * @swagger
  * paths:
- *   /users/{id}:
+ *   /customers/{id}:
  *     delete:
- *       description: Delete an user thanks to a specific ID.
- *       operationId: deleteUser
- *       summary: Delete a specific user.
+ *       description: Delete an customer thanks to a specific ID.
+ *       operationId: deleteCustomer
+ *       summary: Delete a specific customer.
  *       tags:
- *         - users
+ *         - customers
  *       parameters:
  *         - in: path
  *           name: id
  *           required: true
- *           description: The MongoDB ID of the user.
+ *           description: The MongoDB ID of the customer.
  *           schema:
  *             type: string
  *
@@ -213,12 +221,12 @@ router.patch("/:id", (req, res, next) => {
 router.delete("/:id", (req, res, next) => {
   const { id } = req.params;
 
-  Users.deleteOne({ _id: id }, (err, result) => {
+  Customers.deleteOne({ _id: id }, (err, result) => {
     if (err) {
       return next(err);
     }
     if (result.n === 0) {
-      return next(new NotFound(`User #${id} could not be found.`));
+      return next(new NotFound(`Customer #${id} could not be found.`));
     }
     return sendOk(res);
   });
@@ -227,26 +235,26 @@ router.delete("/:id", (req, res, next) => {
 /**
  * @swagger
  * paths:
- *   /users/changePassword/{id}:
+ *   /customers/changePassword/{id}:
  *     patch:
- *       description: Update an user password to the database and hash it.
- *       operationId: patchUserPassword
- *       summary: Update an user password to the database and hash it.
+ *       description: Update an customer password to the database and hash it.
+ *       operationId: patchCustomerPassword
+ *       summary: Update an customer password to the database and hash it.
  *       tags:
- *         - users
+ *         - customers
  *       parameters:
  *         - in: path
  *           name: id
  *           required: true
- *           description: The MongoDB ID of the user.
+ *           description: The MongoDB ID of the customer.
  *           schema:
  *             type: string
  *       requestBody:
- *         description: A JSON containing the new password of the user.
+ *         description: A JSON containing the new password of the customer.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#components/schemas/User'
+ *               $ref: '#components/schemas/Customer'
  *       responses:
  *         '200':
  *           $ref: '#/components/responses/OK'
@@ -258,14 +266,14 @@ router.delete("/:id", (req, res, next) => {
 router.patch("/changePassword/:id", async (req, res, next) => {
   const { id } = req.params;
 
-  console.log("User pwd patch");
+  console.log("Customer pwd patch");
   const { password } = req.body;
   bcrypt.hash(password, config.salt_rounds, (err, hash) => {
     if (err) {
       return next(err);
     }
     req.body.password = hash;
-    Users.updateOne(
+    Customers.updateOne(
       { _id: id },
       req.body,
       { runValidators: true },
@@ -274,7 +282,7 @@ router.patch("/changePassword/:id", async (req, res, next) => {
           return next(innerErr);
         }
         if (result.nModified === 0) {
-          return next(new NotFound(`User #${id} could not be found.`));
+          return next(new NotFound(`Customer #${id} could not be found.`));
         }
         return sendOk(res);
       }
