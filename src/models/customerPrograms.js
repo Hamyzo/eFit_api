@@ -15,22 +15,19 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *
  * components:
  *   schemas:
- *     Program:
+ *     CustomerProgram:
  *       type: object
  *       required:
- *         - name
- *         - coach
+ *         - customer
+ *         - program
  *         - sessions
  *       properties:
- *         name:
- *           type: string
- *           example: Dump bell program
- *         coach:
+ *         customer:
  *           type: string
  *           example: id111111111111111111111111
- *         description:
- *           type: text
- *           example: The program is about well being and fitness
+ *         program:
+ *           type: string
+ *           example: id111111111111111111111111
  *         sessions:
  *           type: array
  *           items:
@@ -51,6 +48,7 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *       type: object
  *       required:
  *         - name
+ *         - periods
  *       properties:
  *         name:
  *           type: string
@@ -101,17 +99,14 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *           example: 14
  */
 
-const ProgramSchema = new Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  coach: {
+const CustomerProgramSchema = new Schema({
+  customer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "coaches"
+    ref: "customers"
   },
-  description: {
-    type: String
+  program: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "programs"
   },
   sessions: [
     {
@@ -124,8 +119,8 @@ const ProgramSchema = new Schema({
   }
 });
 
-ProgramSchema.plugin(uniqueValidator);
+CustomerProgramSchema.plugin(uniqueValidator);
 
-const Programs = mongoose.model(filename, ProgramSchema);
+const CustomerPrograms = mongoose.model(filename, CustomerProgramSchema);
 
-module.exports = Programs;
+module.exports = CustomerPrograms;

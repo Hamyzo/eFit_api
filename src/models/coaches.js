@@ -20,7 +20,7 @@ const regExpEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"
  *
  * components:
  *   schemas:
- *     Customer:
+ *     Coach:
  *       type: object
  *       required:
  *         - password
@@ -45,7 +45,7 @@ const regExpEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"
  *         age:
  *           type: integer
  *           format: int64
- *           example: 14
+ *           example: 25
  *         phone:
  *           type: string
  *           example: +33 6 12 34 56 78
@@ -62,7 +62,7 @@ const regExpEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"
  *           example: 2019-10-15T20:20:20Z
  *         img:
  *           type: string
- *           example: https://image.shutterstock.com/image-vector/male-avatar-profile-picture-vector-260nw-149083895.jpg
+ *           example: http://laderasoccer.net/wp-content/uploads/2019/02/become-a-coach.png
  *         status:
  *           type: string
  *           example: PENDING
@@ -108,7 +108,7 @@ const regExpEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"
  *           example: France
  */
 
-const CustomerSchema = new Schema({
+const CoachSchema = new Schema({
   first_name: {
     type: String
   },
@@ -141,7 +141,7 @@ const CustomerSchema = new Schema({
     type: String,
     trim: true,
     default:
-      "https://image.shutterstock.com/image-vector/male-avatar-profile-picture-vector-260nw-149083895.jpg"
+      "http://laderasoccer.net/wp-content/uploads/2019/02/become-a-coach.png"
   },
   status: {
     type: String,
@@ -164,8 +164,8 @@ const CustomerSchema = new Schema({
   }
 });
 
-CustomerSchema.pre("save", function(next) {
-  // Hash customer password before saving data in database.
+CoachSchema.pre("save", function(next) {
+  // Hash coach password before saving data in database.
   bcrypt.hash(this.password, config.salt_rounds, (err, hash) => {
     if (err) {
       return next(err);
@@ -176,39 +176,39 @@ CustomerSchema.pre("save", function(next) {
 });
 
 // TODO: update last_login_date
-CustomerSchema.statics.login = async (email, password, callback) => {
+CoachSchema.statics.login = async (email, password, callback) => {
   // eslint-disable-next-line no-use-before-define
-  const customer = await Customers.findOne({ email });
+  const coach = await Coaches.findOne({ email });
   // eslint-disable-next-line no-use-before-define
-  const customerWithoutPwd = await Customers.findOne({ email }, "-password");
-  if (!customer) {
-    return callback(new Unauthorized("Wrong customername or password."));
+  const coachWithoutPwd = await Coaches.findOne({ email }, "-password");
+  if (!coach) {
+    return callback(new Unauthorized("Wrong coachname or password."));
   }
   /*
-  if (config.status_needed_for_login && customer.status !== config.status_needed_for_login) {
+  if (config.status_needed_for_login && coach.status !== config.status_needed_for_login) {
     return callback(new Unauthorized('Account not yet activated.'));
   }
-  if (config.status_needed_for_login && customer.organisation.has_paid !== true) {
+  if (config.status_needed_for_login && coach.organisation.has_paid !== true) {
     return callback(new Unauthorized('Membership not paid yet.'));
   }
   */
-  return bcrypt.compare(password, customer.password, (error, result) => {
+  return bcrypt.compare(password, coach.password, (error, result) => {
     // Decrypt password
     if (error) {
       return callback(error);
     }
     if (result) {
-      const token = jwt.sign({ id: customer.id }, config.sha256, {
+      const token = jwt.sign({ id: coach.id }, config.sha256, {
         expiresIn: config.token_expires_in
       });
-      return callback(null, customerWithoutPwd, token);
+      return callback(null, coachWithoutPwd, token);
     }
-    return callback(new Unauthorized("Wrong customername or password."));
+    return callback(new Unauthorized("Wrong coachname or password."));
   });
 };
 
-CustomerSchema.plugin(uniqueValidator);
+CoachSchema.plugin(uniqueValidator);
 
-const Customers = mongoose.model(filename, CustomerSchema);
+const Coaches = mongoose.model(filename, CoachSchema);
 
-module.exports = Customers;
+module.exports = Coaches;
