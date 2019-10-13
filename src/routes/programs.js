@@ -82,10 +82,16 @@ router.get("/", async (req, res, next) => {
  *           $ref: '#/components/responses/NotFound'
  */
 router.get("/:id", async (req, res, next) => {
+  const { filter, skip, limit, sort, projection, population } = aqp(req.query);
   const { id } = req.params;
 
   try {
-    const program = await Programs.findOne({ _id: id }, "-password");
+    const program = await Programs.findOne({ _id: id })
+      .skip(skip)
+      .limit(limit)
+      .sort(sort)
+      .select(projection)
+      .populate(population);
 
     if (!program) {
       return next(new NotFound(`Program #${id} could not be found.`));

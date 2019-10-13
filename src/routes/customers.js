@@ -84,10 +84,16 @@ router.get("/", async (req, res, next) => {
  *           $ref: '#/components/responses/NotFound'
  */
 router.get("/:id", async (req, res, next) => {
+  const { filter, skip, limit, sort, projection, population } = aqp(req.query);
   const { id } = req.params;
 
   try {
-    const customer = await Customers.findOne({ _id: id }, "-password");
+    const customer = await Customers.findOne({ _id: id }, "-password")
+      .skip(skip)
+      .limit(limit)
+      .sort(sort)
+      .select(projection)
+      .populate(population);
 
     if (!customer) {
       return next(new NotFound(`Customer #${id} could not be found.`));
