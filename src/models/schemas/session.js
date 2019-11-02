@@ -81,6 +81,7 @@ module.exports = new Schema({
   ],
   exercises: [
     {
+      _id: false,
       exercise: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "exercises"

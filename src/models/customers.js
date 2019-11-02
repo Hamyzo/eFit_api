@@ -42,6 +42,9 @@ const regExpEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"
  *         email:
  *           type: string
  *           example: aaa@bbb.com
+ *         current_program:
+ *           type: string
+ *           example: id111111111111111111111111
  *         age:
  *           type: integer
  *           format: int64
@@ -121,6 +124,10 @@ const CustomerSchema = new Schema({
     required: true,
     unique: true,
     trim: true
+  },
+  current_program: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "customerPrograms"
   },
   age: {
     type: Number

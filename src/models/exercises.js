@@ -21,16 +21,13 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *       properties:
  *         name:
  *           type: string
- *           example: Day1
+ *           example: Push ups
  *         description:
  *           type: text
- *           example: The session contains these exercises
+ *           example: A description of how to do the push ups
  *         image:
  *           type: string
  *           example: https://greatist.com/sites/default/files/7MinuteWorkout_May_Feat.jpg
- *         periods:
- *           type: array
- *           $ref: '#/components/schemas/Period'
  */
 
 const ExerciseSchema = new Schema({
