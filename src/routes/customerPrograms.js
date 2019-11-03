@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const aqp = require("api-query-params");
 const CustomerPrograms = require("../models/customerPrograms");
+const Customers = require("../models/customers");
 const { NotFound, BadRequest } = require("../utils/Errors");
 const { sendCreated, sendOk, sendPayload } = require("../utils/Responses");
 
@@ -91,7 +92,8 @@ router.get("/:id", async (req, res, next) => {
       .limit(limit)
       .sort(sort)
       .select(projection)
-      .populate(population);
+      .populate(population)
+      .populate("sessions.exercises.exercise");
 
     if (!customerProgram) {
       return next(new NotFound(`CustomerProgram #${id} could not be found.`));
@@ -138,11 +140,30 @@ router.post("/", async (req, res, next) => {
   try {
     const customerProgram = await newCustomerProgram.save();
 
-    res.set({
-      Location: `${global.api_url}/${endpointName}/${customerProgram.id}`
-    });
-
-    return sendCreated(res, "CustomerProgram successfully created.");
+    Customers.updateOne(
+      { _id: customerProgram.customer },
+      { current_program: customerProgram.id },
+      { runValidators: true },
+      (err, result) => {
+        if (err) {
+          return next(err);
+        }
+        if (result.nModified === 0) {
+          return next(
+            new NotFound(
+              `CustomerProgram #${customerProgram.customer} could not be found.`
+            )
+          );
+        }
+        res.set({
+          Location: `${global.api_url}/${endpointName}/${customerProgram.id}`
+        });
+        return sendCreated(
+          res,
+          "CustomerProgram successfully created and assigned to customer."
+        );
+      }
+    );
   } catch (error) {
     return next(error);
   }
