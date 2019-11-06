@@ -32,6 +32,11 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Session'
+ *         focusSessions:
+ *           type: array
+ *           items:
+ *             type: string
+ *             example: id111111111111111111111111
  *         creation_date:
  *           type: string
  *           format: date-time
@@ -49,6 +54,7 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *       required:
  *         - name
  *         - periods
+ *         - exercises
  *       properties:
  *         name:
  *           type: string
@@ -63,19 +69,7 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *         exercises:
  *           type: array
  *           items:
- *             type: object
- *             properties:
- *               exercise:
- *                 type: string
- *                 example: id111111111111111111111111
- *               reps:
- *                 type: integer
- *                 format: int64
- *                 example: 10
- *               sets:
- *                 type: integer
- *                 format: int64
- *                 example: 10
+ *             $ref: '#/components/schemas/Exercise'
  */
 
 /**
@@ -97,6 +91,59 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *           type: integer
  *           format: int64
  *           example: 14
+ *         results:
+ *           type: array
+ *           items:
+ *             type: array
+ *             items:
+ *               $ref: '#/components/schemas/Result'
+ */
+
+/**
+ * @swagger
+ *
+ * components:
+ *   schemas:
+ *     Result:
+ *       type: object
+ *       required:
+ *         - exercise
+ *         - performance
+ *       properties:
+ *         exercise:
+ *           type: string
+ *           example: id111111111111111111111111
+ *         performance:
+ *           type: string
+ *           example: Easy
+ *         time:
+ *           type: float
+ *           example: 120
+ */
+
+/**
+ * @swagger
+ *
+ * components:
+ *   schemas:
+ *     Exercise:
+ *       type: object
+ *       required:
+ *         - exercise
+ *         - reps
+ *         - sets
+ *       properties:
+ *         exercise:
+ *           type: string
+ *           example: id111111111111111111111111
+ *         reps:
+ *           type: integer
+ *           format: int64
+ *           example: 15
+ *         sets:
+ *           type: integer
+ *           format: int64
+ *           example: 3
  */
 
 const CustomerProgramSchema = new Schema({
@@ -111,6 +158,12 @@ const CustomerProgramSchema = new Schema({
   sessions: [
     {
       type: Session
+    }
+  ],
+  focusSessions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "focusSessions"
     }
   ],
   creation_date: {

@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 
 const Period = require("./period");
+const Exercise = require("./exercise");
 
 /**
  * @swagger
@@ -15,6 +16,8 @@ const Period = require("./period");
  *       type: object
  *       required:
  *         - name
+ *         - periods
+ *         - exercises
  *       properties:
  *         name:
  *           type: string
@@ -29,19 +32,32 @@ const Period = require("./period");
  *         exercises:
  *           type: array
  *           items:
- *             type: object
- *             properties:
- *               exercise:
- *                 type: string
- *                 example: id111111111111111111111111
- *               reps:
- *                 type: integer
- *                 format: int64
- *                 example: 10
- *               sets:
- *                 type: integer
- *                 format: int64
- *                 example: 10
+ *             $ref: '#/components/schemas/Exercise'
+ */
+
+/**
+ * @swagger
+ *
+ * components:
+ *   schemas:
+ *     Exercise:
+ *       type: object
+ *       required:
+ *         - exercise
+ *         - reps
+ *         - sets
+ *       properties:
+ *         exercise:
+ *           type: string
+ *           example: id111111111111111111111111
+ *         reps:
+ *           type: integer
+ *           format: int64
+ *           example: 15
+ *         sets:
+ *           type: integer
+ *           format: int64
+ *           example: 3
  */
 
 /**
@@ -81,17 +97,7 @@ module.exports = new Schema({
   ],
   exercises: [
     {
-      _id: false,
-      exercise: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "exercises"
-      },
-      reps: {
-        type: Number
-      },
-      sets: {
-        type: Number
-      }
+      type: Exercise
     }
   ]
 });

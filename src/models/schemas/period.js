@@ -2,13 +2,14 @@
  * PACKAGES
  */
 const { Schema } = require("mongoose");
+const Result = require("./result");
 
 /**
  * @swagger
  *
  * components:
  *   schemas:
- *     period:
+ *     Period:
  *       type: object
  *       required:
  *         - nb_repetitions
@@ -22,6 +23,34 @@ const { Schema } = require("mongoose");
  *           type: integer
  *           format: int64
  *           example: 14
+ *         results:
+ *           type: array
+ *           items:
+ *             type: array
+ *             items:
+ *               $ref: '#/components/schemas/Result'
+ */
+
+/**
+ * @swagger
+ *
+ * components:
+ *   schemas:
+ *     Result:
+ *       type: object
+ *       required:
+ *         - exercise
+ *         - performance
+ *       properties:
+ *         exercise:
+ *           type: string
+ *           example: id111111111111111111111111
+ *         performance:
+ *           type: string
+ *           example: Easy
+ *         time:
+ *           type: float
+ *           example: 120
  */
 
 module.exports = new Schema({
@@ -33,5 +62,12 @@ module.exports = new Schema({
   nb_days: {
     type: Number,
     required: true
-  }
+  },
+  results: [
+    [
+      {
+        type: Result
+      }
+    ]
+  ]
 });
