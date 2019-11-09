@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const aqp = require("api-query-params");
 const FocusSessions = require("../models/focusSessions");
+const CustomerPrograms = require("../models/customerPrograms");
 const { NotFound, BadRequest } = require("../utils/Errors");
 const { sendCreated, sendOk, sendPayload } = require("../utils/Responses");
 
@@ -136,13 +137,41 @@ router.post("/", async (req, res, next) => {
   }
 
   try {
+    if (newFocusSession.thirty_deflections_hr)
+      newFocusSession.dickson_index =
+        (newFocusSession.thirty_deflections_hr -
+          70 +
+          2 *
+            (newFocusSession.one_min_elongated_hr -
+              newFocusSession.five_min_rest_hr)) /
+        10;
+
     const focusSession = await newFocusSession.save();
 
-    res.set({
-      Location: `${global.api_url}/${endpointName}/${focusSession.id}`
-    });
-
-    return sendCreated(res, "FocusSession successfully created.");
+    CustomerPrograms.updateOne(
+      { _id: focusSession.customer_program },
+      { $push: { focus_sessions: focusSession.id } },
+      { runValidators: true },
+      (err, result) => {
+        if (err) {
+          return next(err);
+        }
+        if (result.nModified === 0) {
+          return next(
+            new NotFound(
+              `CustomerProgram #${focusSession.customer_program} could not be found.`
+            )
+          );
+        }
+        res.set({
+          Location: `${global.api_url}/${endpointName}/${focusSession.id}`
+        });
+        return sendCreated(
+          res,
+          "FocusSession successfully created and added to customerProgram FocusSessions."
+        );
+      }
+    );
   } catch (error) {
     return next(error);
   }
@@ -181,9 +210,18 @@ router.post("/", async (req, res, next) => {
  */
 router.patch("/:id", (req, res, next) => {
   const { id } = req.params;
+  const newFocusSession = req.body;
+  if (newFocusSession.thirty_deflections_hr)
+    newFocusSession.dickson_index =
+      (newFocusSession.thirty_deflections_hr -
+        70 +
+        2 *
+          (newFocusSession.one_min_elongated_hr -
+            newFocusSession.five_min_rest_hr)) /
+      10;
   FocusSessions.updateOne(
     { _id: id },
-    req.body,
+    newFocusSession,
     { runValidators: true },
     (err, result) => {
       if (err) {

@@ -12,11 +12,11 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *
  * components:
  *   schemas:
- *     Session:
+ *     FocusSession:
  *       type: object
  *       required:
  *         - customer
- *         - customerProgram
+ *         - customer_program
  *         - age
  *         - weight
  *         - weight_unit
@@ -27,11 +27,12 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *         - one_min_elongated_hr
  *         - dickson_index
  *         - exercises
+ *         - due_date
  *       properties:
  *         customer:
  *           type: string
  *           example: id111111111111111111111111
- *         customerProgram:
+ *         customer_program:
  *           type: string
  *           example: id111111111111111111111111
  *         age:
@@ -71,13 +72,13 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *         exercises:
  *           type: array
  *           items:
+ *             type: string
+ *             example: id111111111111111111111111
+ *         results:
+ *           type: array
+ *           items:
  *             type: object
- *             required:
- *               - exercise
  *             properties:
- *               exercise:
- *                 type: string
- *                 example: id111111111111111111111111
  *               time:
  *                 type: integer
  *                 format: int64
@@ -86,62 +87,64 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *                 type: integer
  *                 format: int64
  *                 example: 35
+ *         due_date:
+ *           type: string
+ *           format: date-time
+ *           example: 2019-10-15T20:20:20Z
+ *         validation_date:
+ *           type: string
+ *           format: date-time
+ *           example: 2019-10-15T20:20:20Z
  */
 
 const FocusSessionSchema = new Schema({
   customer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "customers"
+    ref: "customers",
+    required: true
   },
-  customerProgram: {
+  customer_program: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "customerPrograms"
+    ref: "customerPrograms",
+    required: true
   },
   age: {
-    type: Number,
-    required: true
+    type: Number
   },
   weight: {
-    type: Number,
-    required: true
+    type: Number
   },
   weight_unit: {
     type: String,
     enum: ["kg", "lbs"],
-    required: true,
     default: "kg"
   },
   rest_heart_rate: {
-    type: Number,
-    required: true
+    type: Number
   },
   target_heart_rate: {
-    type: Number,
-    required: true
+    type: Number
   },
   five_min_rest_hr: {
-    type: Number,
-    required: true
+    type: Number
   },
   thirty_deflections_hr: {
-    type: Number,
-    required: true
+    type: Number
   },
   one_min_elongated_hr: {
-    type: Number,
-    required: true
+    type: Number
   },
   dickson_index: {
-    type: Number,
-    required: true
+    type: Number
   },
   exercises: [
     {
-      _id: false,
-      exercise: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "focusExercises"
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "focusExercises"
+    }
+  ],
+  results: [
+    {
       time: {
         type: Number
       },
@@ -149,7 +152,14 @@ const FocusSessionSchema = new Schema({
         type: Number
       }
     }
-  ]
+  ],
+  due_date: {
+    type: Date,
+    required: true
+  },
+  validation_date: {
+    type: Date
+  }
 });
 
 FocusSessionSchema.plugin(uniqueValidator);

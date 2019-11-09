@@ -23,12 +23,19 @@ const Result = require("./result");
  *           type: integer
  *           format: int64
  *           example: 14
- *         results:
+ *         repetitions:
  *           type: array
  *           items:
- *             type: array
- *             items:
- *               $ref: '#/components/schemas/Result'
+ *             type: object
+ *             properties:
+ *             results:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Result'
+ *             date:
+ *               type: string
+ *               format: date-time
+ *               example: 2019-10-15T20:20:20Z
  */
 
 /**
@@ -63,11 +70,17 @@ module.exports = new Schema({
     type: Number,
     required: true
   },
-  results: [
-    [
-      {
-        type: Result
+  repititions: [
+    {
+      results: [
+        {
+          type: Result
+        }
+      ],
+      date: {
+        type: Date,
+        default: Date.now()
       }
-    ]
+    }
   ]
 });

@@ -32,7 +32,7 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Session'
- *         focusSessions:
+ *         focus_sessions:
  *           type: array
  *           items:
  *             type: string
@@ -91,12 +91,19 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *           type: integer
  *           format: int64
  *           example: 14
- *         results:
+ *         repetitions:
  *           type: array
  *           items:
- *             type: array
- *             items:
- *               $ref: '#/components/schemas/Result'
+ *             type: object
+ *             properties:
+ *             results:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Result'
+ *             date:
+ *               type: string
+ *               format: date-time
+ *               example: 2019-10-15T20:20:20Z
  */
 
 /**
@@ -160,7 +167,7 @@ const CustomerProgramSchema = new Schema({
       type: Session
     }
   ],
-  focusSessions: [
+  focus_sessions: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "focusSessions"

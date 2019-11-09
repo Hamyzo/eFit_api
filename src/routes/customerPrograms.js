@@ -151,7 +151,7 @@ router.post("/", async (req, res, next) => {
         if (result.nModified === 0) {
           return next(
             new NotFound(
-              `CustomerProgram #${customerProgram.customer} could not be found.`
+              `Customer #${customerProgram.customer} could not be found.`
             )
           );
         }
