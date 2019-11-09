@@ -93,7 +93,8 @@ router.get("/:id", async (req, res, next) => {
       .sort(sort)
       .select(projection)
       .populate(population)
-      .populate("sessions.exercises.exercise");
+      .populate("sessions.exercises.exercise")
+      .populate("sessions.periods.results.exercise.exercise");
 
     if (!customerProgram) {
       return next(new NotFound(`CustomerProgram #${id} could not be found.`));

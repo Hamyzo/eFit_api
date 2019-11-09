@@ -82,5 +82,10 @@ module.exports = new Schema({
         default: Date.now()
       }
     }
+  ],
+  results: [
+    {
+      type: Result
+    }
   ]
 });
