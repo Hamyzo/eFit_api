@@ -33,8 +33,7 @@ module.exports = new Schema({
   },
   performance: {
     type: Number,
-    enum: [-1, 0, 1],
-    required: true
+    enum: [-1, 0, 1]
   },
   time: {
     type: Number

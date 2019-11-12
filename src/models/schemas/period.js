@@ -84,8 +84,10 @@ module.exports = new Schema({
     }
   ],
   results: [
-    {
-      type: Result
-    }
+    [
+      {
+        type: Result
+      }
+    ]
   ]
 });
