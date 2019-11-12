@@ -70,7 +70,7 @@ module.exports = new Schema({
     type: Number,
     required: true
   },
-  repititions: [
+  repetitions: [
     {
       results: [
         {
