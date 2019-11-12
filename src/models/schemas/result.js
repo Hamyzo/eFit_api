@@ -19,7 +19,7 @@ const Exercise = require("./exercise");
  *           type: string
  *           example: id111111111111111111111111
  *         performance:
- *           type: string
+ *           type: Number
  *           example: Easy
  *         time:
  *           type: float
