@@ -38,6 +38,16 @@ const ExerciseSchema = new Schema({
   description: {
     type: String
   },
+  steps: [
+    {
+      type: String
+    }
+  ],
+  advice: [
+    {
+      type: String
+    }
+  ],
   img: {
     type: String,
     default:
