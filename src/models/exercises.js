@@ -52,6 +52,10 @@ const ExerciseSchema = new Schema({
     type: String,
     default:
       "https://greatist.com/sites/default/files/7MinuteWorkout_May_Feat.jpg"
+  },
+  timed: {
+    type: Boolean,
+    default: false
   }
 });
 
