@@ -38,10 +38,24 @@ const FocusExerciseSchema = new Schema({
   description: {
     type: String
   },
+  steps: [
+    {
+      type: String
+    }
+  ],
+  advice: [
+    {
+      type: String
+    }
+  ],
   img: {
     type: String,
     default:
       "https://greatist.com/sites/default/files/7MinuteWorkout_May_Feat.jpg"
+  },
+  timed: {
+    type: Boolean,
+    default: false
   }
 });
 
