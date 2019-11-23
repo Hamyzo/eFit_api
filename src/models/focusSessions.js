@@ -145,6 +145,7 @@ const FocusSessionSchema = new Schema({
   ],
   results: [
     {
+      _id: false,
       time: {
         type: Number
       },
