@@ -211,7 +211,7 @@ router.post("/", async (req, res, next) => {
 router.patch("/:id", (req, res, next) => {
   const { id } = req.params;
   const newFocusSession = req.body;
-  if (newFocusSession.thirty_deflections_hr)
+  if (newFocusSession.thirty_deflections_hr) {
     newFocusSession.dickson_index =
       (newFocusSession.thirty_deflections_hr -
         70 +
@@ -219,6 +219,8 @@ router.patch("/:id", (req, res, next) => {
           (newFocusSession.one_min_elongated_hr -
             newFocusSession.five_min_rest_hr)) /
       10;
+    newFocusSession.validation_date = new Date();
+  }
   FocusSessions.updateOne(
     { _id: id },
     newFocusSession,

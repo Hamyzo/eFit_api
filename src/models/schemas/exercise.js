@@ -40,5 +40,8 @@ module.exports = new Schema({
   },
   sets: {
     type: Number
+  },
+  time: {
+    type: Number
   }
 });
