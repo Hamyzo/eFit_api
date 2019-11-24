@@ -53,6 +53,10 @@ const ExerciseSchema = new Schema({
     default:
       "https://greatist.com/sites/default/files/7MinuteWorkout_May_Feat.jpg"
   },
+  vid: {
+    type: String,
+    default: "/assets/videos/workouts/Push ups.mp4"
+  },
   timed: {
     type: Boolean,
     default: false

@@ -8,6 +8,7 @@ const FocusSessions = require("../models/focusSessions");
 const CustomerPrograms = require("../models/customerPrograms");
 const { NotFound, BadRequest } = require("../utils/Errors");
 const { sendCreated, sendOk, sendPayload } = require("../utils/Responses");
+const sendMail = require("../utils/sendMail");
 
 const router = express.Router();
 
@@ -208,10 +209,10 @@ router.post("/", async (req, res, next) => {
  *         '404':
  *          $ref: '#/components/responses/NotFound'
  */
-router.patch("/:id", (req, res, next) => {
+router.patch("/:id", async (req, res, next) => {
   const { id } = req.params;
   const newFocusSession = req.body;
-  if (newFocusSession.thirty_deflections_hr) {
+  if (newFocusSession.results.length > 0) {
     newFocusSession.dickson_index =
       (newFocusSession.thirty_deflections_hr -
         70 +
@@ -220,6 +221,23 @@ router.patch("/:id", (req, res, next) => {
             newFocusSession.five_min_rest_hr)) /
       10;
     newFocusSession.validation_date = new Date();
+    const focusSession = await FocusSessions.findOne({ _id: id })
+      .populate("customer")
+      .populate({
+        path: "customer_program",
+        populate: {
+          path: "program",
+          populate: {
+            path: "coach"
+          }
+        }
+      });
+    console.log(focusSession);
+    sendMail(
+      focusSession.customer_program.program.coach.email,
+      `New focus session validated`,
+      `Hello ${focusSession.customer_program.program.coach.first_name},\n\n${focusSession.customer.first_name} ${focusSession.customer.last_name} has finished their focus session, please visit http://localhost:3000/#/customerPrograms/${focusSession.customer_program._id} to see the results`
+    );
   }
   FocusSessions.updateOne(
     { _id: id },
