@@ -1,7 +1,7 @@
 /**
  * PACKAGES
  */
-import socktIO from "socket.io";
+const socktIO = require("socket.io");
 
 const express = require("express");
 const http = require("http");
