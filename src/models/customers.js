@@ -125,6 +125,18 @@ const CustomerSchema = new Schema({
     unique: true,
     trim: true
   },
+  level: {
+    type: Number,
+    default: 1
+  },
+  xp: {
+    type: Number,
+    default: 0
+  },
+  water: {
+    type: Number,
+    default: 15
+  },
   current_program: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "customerPrograms"
