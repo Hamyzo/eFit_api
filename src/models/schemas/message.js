@@ -9,7 +9,7 @@ const { Schema } = require("mongoose");
  *
  * components:
  *   schemas:
- *     Session:
+ *     Message:
  *       type: object
  *       required:
  *         - sender

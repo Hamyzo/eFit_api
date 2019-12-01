@@ -1,6 +1,8 @@
 /**
  * PACKAGES
  */
+const socktIO = require("socket.io");
+
 const express = require("express");
 const http = require("http");
 const bodyParser = require("body-parser");
@@ -17,7 +19,6 @@ const middleware = require("../src/utils/request-middleware");
 const configSwagger = require("./swagger");
 const handleErrorType = require("../src/utils/handle-errors-type");
 const { NotFound } = require("../src/utils/Errors");
-const socktIO = require("socket.io");
 
 if (process.env.NODE_ENV === "prod") {
   global.api_url = `${config.prod_api_url}:${personal.port_https}`;

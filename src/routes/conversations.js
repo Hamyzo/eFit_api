@@ -33,7 +33,7 @@ const endpointName = __filename.slice(__dirname.length + 1, -3);
  *                schema:
  *                  type: array
  *                  items:
- *                    $ref: '#/components/schemas/Conversations'
+ *                    $ref: '#/components/schemas/Conversation'
  */
 router.get("/", async (req, res, next) => {
   try {
@@ -58,16 +58,16 @@ router.get("/", async (req, res, next) => {
  * paths:
  *   /conversations/{id}:
  *     get:
- *       description: Get a notification information corresponding to a specific ID.
- *       operationId: getConversations
- *       summary: Get a specific notification information.
+ *       description: Get a conversation information corresponding to a specific ID.
+ *       operationId: getConversation
+ *       summary: Get a specific conversation information.
  *       tags:
  *         - conversations
  *       parameters:
  *         - in: path
  *           name: id
  *           required: true
- *           description: The MongoDB ID of the focusSession.
+ *           description: The MongoDB ID of the conversation.
  *           schema:
  *             type: string
  *
@@ -77,7 +77,7 @@ router.get("/", async (req, res, next) => {
  *           content:
  *             application/json:
  *               schema:
- *                 $ref: '#/components/schemas/Conversations'
+ *                 $ref: '#/components/schemas/Conversation'
  *         '404':
  *           $ref: '#/components/responses/NotFound'
  */
@@ -86,17 +86,17 @@ router.get("/:id", async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const notification = await Conversations.findOne({ _id: id })
+    const conversation = await Conversations.findOne({ _id: id })
       .skip(skip)
       .limit(limit)
       .sort(sort)
       .select(projection)
       .populate(population);
 
-    if (!notification) {
-      return next(new NotFound(`Conversations #${id} could not be found.`));
+    if (!conversation) {
+      return next(new NotFound(`Conversation #${id} could not be found.`));
     }
-    return sendPayload(res, notification, 200);
+    return sendPayload(res, conversation, 200);
   } catch (error) {
     return next(error);
   }
@@ -107,18 +107,18 @@ router.get("/:id", async (req, res, next) => {
  * paths:
  *   /conversations:
  *     post:
- *       description: Register a new notification to the database.
- *       operationId: createConversations
- *       summary: Create a new notification.
+ *       description: Register a new conversation to the database.
+ *       operationId: createConversation
+ *       summary: Create a new conversation.
  *       tags:
  *         - conversations
  *       requestBody:
- *         description: Conversations information needed in order to create an notification.
+ *         description: Conversation information needed in order to create an conversation.
  *         required: true
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#components/schemas/Conversations'
+ *               $ref: '#components/schemas/Conversation'
  *       responses:
  *         '201':
  *           $ref: '#/components/responses/Created'
@@ -128,21 +128,21 @@ router.get("/:id", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   // eslint-disable-next-line no-underscore-dangle
   req.body._id = mongoose.Types.ObjectId(req.body._id);
-  const newConversations = new Conversations(req.body);
-  const err = newConversations.validateSync();
+  const newConversation = new Conversations(req.body);
+  const err = newConversation.validateSync();
 
   if (err !== undefined) {
     return next(new BadRequest(err.errors));
   }
 
   try {
-    const notification = await newConversations.save();
+    const conversation = await newConversation.save();
 
     res.set({
-      Location: `${global.api_url}/${endpointName}/${notification.id}`
+      Location: `${global.api_url}/${endpointName}/${conversation.id}`
     });
 
-    return sendCreated(res, "Conversations successfully created.");
+    return sendCreated(res, "Conversation successfully created.");
   } catch (error) {
     return next(error);
   }
@@ -153,24 +153,24 @@ router.post("/", async (req, res, next) => {
  * paths:
  *   /conversations/{id}:
  *     patch:
- *       description: Update a notification to the database.
- *       operationId: patchConversations
- *       summary: Update a notification.
+ *       description: Update an conversation to the database.
+ *       operationId: patchConversation
+ *       summary: Update an conversation.
  *       tags:
  *         - conversations
  *       parameters:
  *         - in: path
  *           name: id
  *           required: true
- *           description: The MongoDB ID of the notification.
+ *           description: The MongoDB ID of the conversation.
  *           schema:
  *             type: string
  *       requestBody:
- *         description: Conversations information needed in order to update a notification. Just fields witch need to be updated are required.
+ *         description: Conversation information needed in order to update a conversation. Just fields witch need to be updated are required.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#components/schemas/Conversations'
+ *               $ref: '#components/schemas/Conversation'
  *       responses:
  *         '200':
  *           $ref: '#/components/responses/OK'
@@ -190,7 +190,7 @@ router.patch("/:id", (req, res, next) => {
         return next(err);
       }
       if (result.nModified === 0) {
-        return next(new NotFound(`Conversations #${id} could not be found.`));
+        return next(new NotFound(`Conversation #${id} could not be found.`));
       }
       return sendOk(res);
     }
@@ -202,16 +202,16 @@ router.patch("/:id", (req, res, next) => {
  * paths:
  *   /conversations/{id}:
  *     delete:
- *       description: Delete a Conversations thanks to a specific ID.
- *       operationId: deleteConversations
- *       summary: Delete a specific notification.
+ *       description: Delete an conversation thanks to a specific ID.
+ *       operationId: deleteConversation
+ *       summary: Delete a specific conversation.
  *       tags:
  *         - conversations
  *       parameters:
  *         - in: path
  *           name: id
  *           required: true
- *           description: The MongoDB ID of the notification.
+ *           description: The MongoDB ID of the conversation.
  *           schema:
  *             type: string
  *
@@ -229,7 +229,7 @@ router.delete("/:id", (req, res, next) => {
       return next(err);
     }
     if (result.n === 0) {
-      return next(new NotFound(`Conversations #${id} could not be found.`));
+      return next(new NotFound(`Conversation #${id} could not be found.`));
     }
     return sendOk(res);
   });

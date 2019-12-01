@@ -39,7 +39,33 @@ const filename = __filename.slice(__dirname.length + 1, -3);
  *           type: string
  *           format: date-time
  *           example: 2019-12-15T20:20:20Z
+ */
+
+/**
+ * @swagger
  *
+ * components:
+ *   schemas:
+ *     Message:
+ *       type: object
+ *       required:
+ *         - sender
+ *         - content
+ *         - creation_date
+ *       properties:
+ *         sender:
+ *           type: string
+ *           example: CUSTOMER
+ *         content:
+ *           type: string
+ *           example: Hey Coach how are you ?
+ *         seen:
+ *           type: boolean
+ *           example: false
+ *         creation_date:
+ *           type: string
+ *           format: date-time
+ *           example: 2019-10-15T20:20:20Z
  */
 
 const ConversationSchema = new Schema({
