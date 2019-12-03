@@ -99,17 +99,19 @@ module.exports = callback => {
   const io = socktIO(server);
   const sockets = {};
   io.on("connection", socket => {
-    sockets[socket.handshake.query.id_user] = socket;
-    console.log("a user is connected: ", socket.handshake.query.id_user);
+    sockets[socket.handshake.query.userId] = socket;
+    console.log("a user is connected: ", socket.handshake.query.userId);
     console.log("Connected sockets: ", Object.keys(sockets));
     socket.on("disconnect", () => {
-      delete sockets[socket.handshake.query.id_user];
+      delete sockets[socket.handshake.query.userId];
       console.log("Connected sockets: ", Object.keys(sockets));
       console.log("user disconnected ");
     });
-    socket.on("chat message", message => {
-      if (sockets[message.id_receiver]) {
-        sockets[message.id_receiver].emit("chat message", message);
+    socket.on("chat message", (message, receiverId) => {
+      console.log(receiverId);
+      if (sockets[receiverId]) {
+        sockets[receiverId].emit("chat message", message);
+        console.log("Message: ", message.content);
       }
     });
   });
